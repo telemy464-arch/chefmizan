@@ -13,15 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chef Mizan | Master Culinary Arts & Fine Dining",
+  title: "The Borders Unfolded | Global Geopolitics & Border Anomalies",
   description:
-    "Official website of Chef Mizan (chefmizan.cyou). Experience artisanal dishes, private dining, gourmet recipes, and table reservations.",
-  keywords: ["Chef Mizan", "chefmizan.cyou", "Fine Dining", "Gourmet Cuisine", "Chef Portfolio", "Recipe Master"],
+    "Official investigative news and documentary platform by Chef Mizan. Exploring sovereign anomalies, border enclaves, treaties, and global geopolitics.",
+  keywords: ["The Borders Unfolded", "Chef Mizan", "chefmizan.cyou", "Border Anomalies", "Llívia Enclave", "Geopolitics", "Pyrenees"],
   openGraph: {
-    title: "Chef Mizan | Master Culinary Arts",
-    description: "Experience artisanal dishes, private dining, and table reservations.",
+    title: "The Borders Unfolded | Global Geopolitics & Border Mysteries",
+    description: "Investigating the world's most fascinating borders, enclaves, and historical treaties.",
     url: "https://chefmizan.cyou",
-    siteName: "Chef Mizan",
+    siteName: "The Borders Unfolded",
     locale: "en_US",
     type: "website",
   },
@@ -34,7 +34,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-black min-h-screen flex flex-col`}>
+      <head>
+        {/* Google Translate Hidden Engine */}
+        <div id="google_translate_element" style={{ display: "none" }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                  pageLanguage: 'en',
+                  autoDisplay: false
+                }, 'google_translate_element');
+              }
+            `,
+          }}
+        />
+        <script
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          async
+        />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0b1120] text-slate-100 min-h-screen flex flex-col`}>
         {children}
       </body>
     </html>

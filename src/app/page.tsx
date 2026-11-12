@@ -1,652 +1,720 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import {
-  Lock,
-  Mail,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Loader2,
-  CheckCircle2,
-  Sparkles,
-  Droplets,
-  User,
-  Phone,
-  ShieldCheck,
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { 
+  Flame, 
+  Clock, 
+  ThumbsUp, 
+  MessageSquare, 
+  Search, 
+  Play, 
+  TrendingUp, 
+  ChevronRight,
+  Send,
+  Globe,
+  X,
+  Check
 } from "lucide-react";
 
-// Water Ripple Wave Interface
-interface WaterRipple {
-  x: number;
-  y: number;
-  radius: number;
-  maxRadius: number;
-  alpha: number;
-  speed: number;
-  color: string;
-  lineWidth: number;
+interface Comment {
+  id: string;
+  author: string;
+  text: string;
+  time: string;
 }
 
-export default function IndexPage() {
-  const router = useRouter();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const cardRef = useRef<HTMLDivElement | null>(null);
+interface Article {
+  id: string;
+  title: string;
+  category: string;
+  summary: string;
+  content: string;
+  image: string;
+  youtubeId?: string;
+  publishedAt: string;
+  reads: number;
+  likes: number;
+  comments: Comment[];
+  isLead?: boolean;
+  isBreaking?: boolean;
+}
 
-  // Ripple state tracking in ref for 60fps smooth canvas rendering
-  const ripplesRef = useRef<WaterRipple[]>([]);
-  const lastSpawnRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
+const LANGUAGES = [
+  { code: "en", name: "English (US)", native: "English" },
+  { code: "es", name: "Spanish", native: "Español" },
+  { code: "tr", name: "Turkish", native: "Türkçe" },
+  { code: "bn", name: "Bengali", native: "বাংলা" },
+  { code: "fr", name: "French", native: "Français" },
+  { code: "de", name: "German", native: "Deutsch" },
+  { code: "ar", name: "Arabic", native: "العربية" },
+  { code: "pt", name: "Portuguese", native: "Português" },
+  { code: "ru", name: "Russian", native: "Русский" },
+  { code: "zh-CN", name: "Chinese (Simplified)", native: "中文" },
+  { code: "ja", name: "Japanese", native: "日本語" },
+  { code: "hi", name: "Hindi", native: "हिन्दी" },
+  { code: "ur", name: "Urdu", native: "اردو" },
+  { code: "it", name: "Italian", native: "Italiano" }
+];
 
-  // Floating 3D card tilt state
-  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, scale: 1 });
-  const [isPressing, setIsPressing] = useState(false);
+const INITIAL_ARTICLES: Article[] = [
+  {
+    id: "llivia-enclave-day25",
+    title: "Trapped Inside France: The Curious Spanish Enclave of Llívia",
+    category: "Border Anomalies",
+    summary: "Surrounded entirely by French territory, a lone Spanish town flies the Catalan flag in the heart of the Pyrenees. How a clever loophole in the 1659 treaty outsmarted King Louis XIV.",
+    content: `Deep inside the French department of Pyrénées-Orientales lies an extraordinary sovereign territory: Llívia. Although completely surrounded by French soil, Llívia is legally part of Spain's Girona province.
 
-  // Mode: Sign In or Sign Up
-  const [isSignUp, setIsSignUp] = useState(false);
+The origin of this territorial anomaly dates back to November 7, 1659, when the Treaty of the Pyrenees was signed between King Louis XIV of France and King Philip IV of Spain to conclude the Franco-Spanish War. Under the agreement, Spain was obligated to cede all villages north of the Pyrenees mountains to the French Crown.
 
-  // Form Fields
-  const [name, setName] = useState("");
-  const [emailOrPhone, setEmailOrPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+However, Spanish negotiators discovered a historic technicality: during ancient Roman rule and later under Holy Roman Emperor Charles V, Llívia had been formally granted the charter of a 'City' (Ciutat), rather than a village. Spain argued that the treaty explicitly ceded 'villages', not cities. France conceded the point, leaving Llívia an independent sovereign island trapped three miles deep inside France.`,
+    image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
+    youtubeId: "UpHUF-MFQFg",
+    publishedAt: "25m ago",
+    reads: 1420,
+    likes: 128,
+    isLead: true,
+    isBreaking: true,
+    comments: [
+      { id: "c1", author: "David Vance", text: "Incredible historical breakdown! The Treaty of the Pyrenees has so many hidden loopholes.", time: "10m ago" },
+      { id: "c2", author: "Marcus Aurelius", text: "Love the footage from the YouTube short. Keep these border documentaries coming!", time: "5m ago" }
+    ]
+  },
+  {
+    id: "baarle-nassau-puzzle",
+    title: "Borders Through Living Rooms: The Mind-Bending Enclaves of Baarle-Nassau",
+    category: "Border Anomalies",
+    summary: "A town where dining tables sit in the Netherlands while the kitchen resides in Belgium. How 30 interlocking enclaves create the world's most tangled border.",
+    content: "Baarle-Hertog and Baarle-Nassau represent the most fragmented international border on earth, consisting of 22 Belgian exclaves surrounded by Dutch soil, and 8 Dutch exclaves inside Belgian territory...",
+    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80",
+    youtubeId: "ebWgF6fctmA",
+    publishedAt: "1h ago",
+    reads: 980,
+    likes: 74,
+    comments: []
+  },
+  {
+    id: "bir-tawil-unclaimed",
+    title: "The Land Nobody Wants: Bir Tawil's Unclaimed Sovereignty",
+    category: "Geopolitics",
+    summary: "A 2,060-square-kilometer trapezoid of desert between Egypt and Sudan that neither country claims, remaining one of earth's only terra nullius zones.",
+    content: "Bir Tawil exists as a legal paradox created by conflicting 1899 political boundaries and 1902 administrative boundaries set by the British Empire...",
+    image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
+    publishedAt: "3h ago",
+    reads: 2150,
+    likes: 195,
+    comments: []
+  },
+  {
+    id: "global-media-headless-revolution",
+    title: "Why Modern News Portals Are Switching to Headless Next.js Architecture",
+    category: "Technology",
+    summary: "Digital publishing giants are moving away from legacy monolithic CMS to high-speed Next.js edge networks for instant global reader experiences.",
+    content: "Speed and instant caching define digital engagement. Media giants like Prothom Alo and international publishers adopt headless CMS structures like Quintype and custom React/Next.js stacks...",
+    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
+    publishedAt: "4h ago",
+    reads: 640,
+    likes: 52,
+    comments: []
+  }
+];
 
-  // Status State
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+const CATEGORIES = [
+  "Latest",
+  "Border Anomalies",
+  "Geopolitics",
+  "Global News",
+  "Historical Treaties",
+  "Videos & Shorts",
+  "Technology",
+  "Investigations"
+];
 
-  // Button Ripple effect state
-  const [btnRipples, setBtnRipples] = useState<{ x: number; y: number; id: number }[]>([]);
+export default function HomePage() {
+  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
+  const [selectedCategory, setSelectedCategory] = useState("Latest");
+  const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+  const [likedArticles, setLikedArticles] = useState<{ [key: string]: boolean }>({});
+  const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
+  const [userName, setUserName] = useState("Chef Mizan");
 
-  // Setup Canvas Water Simulation
+  // Custom Language State
+  const [currentLang, setCurrentLang] = useState("en");
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const saved = localStorage.getItem("portal_articles");
+    if (saved) {
+      try {
+        setArticles(JSON.parse(saved));
+      } catch (e) {}
+    }
 
-    let animationFrameId: number;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    // Initial ambient gentle ripples
-    const spawnRipple = (x: number, y: number, isMajor = false) => {
-      const colors = isMajor
-        ? ["rgba(56, 189, 248, 0.7)", "rgba(147, 197, 253, 0.6)", "rgba(251, 191, 36, 0.4)"]
-        : ["rgba(56, 189, 248, 0.4)", "rgba(125, 211, 252, 0.3)", "rgba(14, 165, 233, 0.3)"];
-
-      const count = isMajor ? 3 : 2;
-      for (let i = 0; i < count; i++) {
-        ripplesRef.current.push({
-          x,
-          y,
-          radius: 4 + i * 8,
-          maxRadius: isMajor ? 180 + i * 40 : 90 + i * 20,
-          alpha: isMajor ? 0.7 - i * 0.15 : 0.45 - i * 0.1,
-          speed: isMajor ? 3.5 + i * 0.8 : 2.2 + i * 0.5,
-          color: colors[i % colors.length],
-          lineWidth: isMajor ? 2.5 : 1.5,
-        });
-      }
-    };
-
-    // Ambient random water droplets
-    const ambientInterval = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        const randX = Math.random() * window.innerWidth;
-        const randY = Math.random() * window.innerHeight;
-        spawnRipple(randX, randY, false);
-      }
-    }, 2800);
-
-    // Canvas render loop
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
-        const r = ripplesRef.current[i];
-        r.radius += r.speed;
-        r.alpha *= 0.965; // Smooth exponential decay
-
-        if (r.alpha <= 0.01 || r.radius >= r.maxRadius) {
-          ripplesRef.current.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = r.color.replace(/[\d.]+\)$/g, `${r.alpha.toFixed(3)})`);
-        ctx.lineWidth = r.lineWidth;
-        ctx.shadowColor = "rgba(56, 189, 248, 0.6)";
-        ctx.shadowBlur = 8;
-        ctx.stroke();
-
-        // Inner refraction wave
-        if (r.radius > 15) {
-          ctx.beginPath();
-          ctx.arc(r.x, r.y, Math.max(2, r.radius - 8), 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${(r.alpha * 0.35).toFixed(3)})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-
-        ctx.restore();
-      }
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      clearInterval(ambientInterval);
-      cancelAnimationFrame(animationFrameId);
-    };
+    // Check existing google translate cookie
+    const match = document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
+    if (match && match[1]) {
+      setCurrentLang(match[1]);
+    }
   }, []);
 
-  // Handle pointer/touch interaction across the screen
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const x = e.clientX;
-    const y = e.clientY;
-    const now = performance.now();
+  const changeLanguage = (langCode: string) => {
+    setCurrentLang(langCode);
+    setIsLangMenuOpen(false);
 
-    const dist = Math.hypot(x - lastSpawnRef.current.x, y - lastSpawnRef.current.y);
-    if (dist > 35 && now - lastSpawnRef.current.time > 60) {
-      lastSpawnRef.current = { x, y, time: now };
-
-      ripplesRef.current.push({
-        x,
-        y,
-        radius: 5,
-        maxRadius: 100,
-        alpha: 0.5,
-        speed: 2.8,
-        color: "rgba(56, 189, 248, 0.4)",
-        lineWidth: 1.8,
-      });
-      ripplesRef.current.push({
-        x,
-        y,
-        radius: 12,
-        maxRadius: 140,
-        alpha: 0.3,
-        speed: 3.4,
-        color: "rgba(147, 197, 253, 0.3)",
-        lineWidth: 1.2,
-      });
+    if (langCode === "en") {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+      window.location.reload();
+      return;
     }
 
-    if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const deltaX = (x - centerX) / (rect.width / 2);
-      const deltaY = (y - centerY) / (rect.height / 2);
-
-      const maxTilt = 12;
-      setTilt({
-        rotateX: -Math.max(-maxTilt, Math.min(maxTilt, deltaY * maxTilt)),
-        rotateY: Math.max(-maxTilt, Math.min(maxTilt, deltaX * maxTilt)),
-        scale: isPressing ? 0.985 : 1,
-      });
-    }
+    // Set google translate cookies
+    document.cookie = `googtrans=/en/${langCode}; path=/;`;
+    document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/;`;
+    window.location.reload();
   };
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    setIsPressing(true);
-    const x = e.clientX;
-    const y = e.clientY;
-
-    for (let i = 0; i < 3; i++) {
-      ripplesRef.current.push({
-        x,
-        y,
-        radius: 4 + i * 10,
-        maxRadius: 180 + i * 35,
-        alpha: 0.75 - i * 0.15,
-        speed: 4 + i * 1.2,
-        color: i === 0 ? "rgba(251, 191, 36, 0.6)" : "rgba(56, 189, 248, 0.6)",
-        lineWidth: 2.5,
-      });
-    }
-  };
-
-  const handlePointerUp = () => {
-    setIsPressing(false);
-  };
-
-  const handlePointerLeave = () => {
-    setIsPressing(false);
-    setTilt({ rotateX: 0, rotateY: 0, scale: 1 });
-  };
-
-  // Button touch water ripple
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const newId = Date.now();
-
-    setBtnRipples((prev) => [...prev, { x, y, id: newId }]);
-    setTimeout(() => {
-      setBtnRipples((prev) => prev.filter((r) => r.id !== newId));
-    }, 700);
-  };
-
-  // Form Submit Handler
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    try {
-      if (isSignUp) {
-        // Sign Up API Call
-        if (password !== confirmPassword) {
-          setErrorMessage("Passwords do not match.");
-          setIsLoading(false);
-          return;
-        }
-
-        const res = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, emailOrPhone, password, confirmPassword }),
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          setSuccessMessage("Account created! Redirecting to Dashboard...");
-          if (typeof window !== "undefined") {
-            localStorage.setItem("chef_mizan_user", JSON.stringify(data.user));
-          }
-          setTimeout(() => {
-            router.push("/dashboard");
-          }, 1000);
-        } else {
-          setErrorMessage(data.message || "Failed to create account.");
-        }
-      } else {
-        // Sign In API Call
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: emailOrPhone, password, rememberMe }),
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          setSuccessMessage("Signed in successfully! Redirecting to Dashboard...");
-          if (typeof window !== "undefined") {
-            localStorage.setItem("chef_mizan_user", JSON.stringify(data.user));
-          }
-          setTimeout(() => {
-            router.push("/dashboard");
-          }, 1000);
-        } else {
-          setErrorMessage(data.message || "Invalid credentials.");
-        }
+  const handleLike = (id: string) => {
+    const isCurrentlyLiked = likedArticles[id];
+    const updated = articles.map(a => {
+      if (a.id === id) {
+        return { ...a, likes: isCurrentlyLiked ? a.likes - 1 : a.likes + 1 };
       }
-    } catch {
-      setErrorMessage("Network error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+      return a;
+    });
+    setArticles(updated);
+    setLikedArticles(prev => ({ ...prev, [id]: !isCurrentlyLiked }));
+    localStorage.setItem("portal_articles", JSON.stringify(updated));
   };
 
-  // Quick 1-click fill
-  const handleQuickDemo = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isSignUp) {
-      setName("MD Mizanur Rahman");
-      setEmailOrPhone("chef@chefmizan.cyou");
-      setPassword("masterchef2026");
-      setConfirmPassword("masterchef2026");
-    } else {
-      setEmailOrPhone("chef@chefmizan.cyou");
-      setPassword("masterchef2026");
-    }
+  const handleAddComment = (articleId: string) => {
+    const text = commentInputs[articleId]?.trim();
+    if (!text) return;
+
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: userName || "Global Reader",
+      text,
+      time: "Just now"
+    };
+
+    const updated = articles.map(a => {
+      if (a.id === articleId) {
+        return { ...a, comments: [newComment, ...a.comments] };
+      }
+      return a;
+    });
+
+    setArticles(updated);
+    setCommentInputs(prev => ({ ...prev, [articleId]: "" }));
+    localStorage.setItem("portal_articles", JSON.stringify(updated));
   };
+
+  const filteredArticles = selectedCategory === "Latest"
+    ? articles
+    : articles.filter(a => a.category === selectedCategory);
+
+  const leadArticle = articles.find(a => a.isLead) || articles[0];
+  const sideArticles = articles.filter(a => a.id !== leadArticle.id).slice(0, 3);
+  const breakingNews = articles.filter(a => a.isBreaking);
+
+  const currentLangObj = LANGUAGES.find(l => l.code === currentLang) || LANGUAGES[0];
 
   return (
-    <main
-      ref={containerRef}
-      onPointerMove={handlePointerMove}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerLeave}
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-950 select-none cursor-default"
-      style={{
-        background: "radial-gradient(ellipse at 50% 40%, #0a192f 0%, #020617 75%, #000208 100%)",
-      }}
-    >
-      {/* Interactive Water Ripple Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-10 pointer-events-none"
-      />
+    <div className="min-h-screen bg-[#0b1120] text-slate-100 font-sans selection:bg-rose-600 selection:text-white">
+      
+      {/* Top Bar with Date, Universal Language Selector, & Publishing Portal */}
+      <header className="border-b border-slate-800 bg-[#090e1a]/95 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 text-sm">
+            
+            {/* Date & Region Tag */}
+            <div className="flex items-center space-x-4 text-xs text-slate-400">
+              <span className="flex items-center gap-1.5 font-medium text-slate-300">
+                <Clock className="w-3.5 h-3.5 text-rose-500" />
+                {new Date().toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}
+              </span>
+              <span className="hidden sm:inline-block text-slate-600">•</span>
+              <span className="hidden sm:inline-block text-rose-400 font-semibold uppercase tracking-wider text-[11px]">
+                US & Global Edition
+              </span>
+            </div>
 
-      {/* Ambient Liquid Waves & Caustics in Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-cyan-500/20 blur-[100px] liquid-caustic" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-amber-500/15 blur-[120px] liquid-caustic" style={{ animationDelay: "-3s" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-sky-500/10 blur-[140px] liquid-caustic" style={{ animationDelay: "-5s" }} />
-      </div>
+            {/* Custom English/Native Language Selector Dropdown */}
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              
+              <div className="relative">
+                <button
+                  onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                  className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 transition shadow-sm"
+                >
+                  <Globe className="w-4 h-4 text-sky-400" />
+                  <span className="font-semibold">{currentLangObj.name}</span>
+                  <span className="text-[10px] bg-slate-800 text-sky-300 px-1.5 py-0.5 rounded border border-slate-700">
+                    {currentLangObj.native}
+                  </span>
+                </button>
 
-      {/* Subtle Water Surface Grid lines */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: "radial-gradient(circle, #38bdf8 1px, transparent 1px)",
-          backgroundSize: "36px 36px",
-        }}
-      />
-
-      {/* Floating Liquid Glass Login/Sign-Up Card Container with 3D Perspective */}
-      <div
-        className="relative z-20 w-full max-w-[440px] px-4 py-8"
-        style={{ perspective: "1000px" }}
-      >
-        <div
-          ref={cardRef}
-          className="water-floating transition-transform duration-150 ease-out rounded-3xl relative backdrop-blur-2xl bg-slate-900/40 border border-white/10 shadow-[0_20px_60px_-15px_rgba(2,132,199,0.25)] p-8 sm:p-10 text-white overflow-hidden"
-          style={{
-            transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) scale(${tilt.scale})`,
-            transformStyle: "preserve-3d",
-            boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px 2px rgba(56, 189, 248, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2)`,
-          }}
-        >
-          {/* Glass Specular Water Glare Highlight */}
-          <div
-            className="absolute -inset-full pointer-events-none opacity-20 transition-opacity duration-300"
-            style={{
-              background: `radial-gradient(circle 300px at ${tilt.rotateY * 15 + 50}% ${-tilt.rotateX * 15 + 50}%, rgba(255,255,255,0.4), transparent 70%)`,
-            }}
-          />
-
-          {/* Card Water Shimmer Border */}
-          <div className="absolute inset-0 rounded-3xl border border-sky-400/20 pointer-events-none" />
-
-          {/* Top Droplet & Domain Info */}
-          <div className="flex flex-col items-center text-center mb-6">
-            <div className="relative mb-2.5 group cursor-pointer">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500/20 via-sky-400/10 to-amber-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.25)] transition-transform duration-300 group-hover:scale-110">
-                <Droplets className="w-7 h-7 animate-pulse text-sky-300" />
+                {/* Dropdown Menu in English & Native Script */}
+                {isLangMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-[#0f172a] border border-slate-700/80 rounded-2xl shadow-2xl py-2 z-50 max-h-80 overflow-y-auto">
+                    <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                      Select Display Language
+                    </div>
+                    {LANGUAGES.map(lang => (
+                      <button
+                        key={lang.code}
+                        onClick={() => changeLanguage(lang.code)}
+                        className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between hover:bg-slate-800/80 transition ${
+                          currentLang === lang.code ? "bg-rose-600/20 text-rose-400 font-bold" : "text-slate-300"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span>{lang.name}</span>
+                          <span className="text-[11px] text-slate-500 font-normal">({lang.native})</span>
+                        </div>
+                        {currentLang === lang.code && <Check className="w-3.5 h-3.5 text-rose-500" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="absolute inset-0 rounded-2xl bg-sky-400/20 blur-md -z-10 animate-ping opacity-25" />
-            </div>
 
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-white">
-              {isSignUp ? "Create Account" : "Sign In"}
-            </h1>
-            <p className="text-xs text-sky-400/90 font-mono tracking-widest mt-0.5">
-              chefmizan.cyou
-            </p>
+              {/* Admin Dashboard Link */}
+              <Link 
+                href="/dashboard" 
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-md shadow-rose-950"
+              >
+                + Write Post
+              </Link>
+            </div>
           </div>
+        </div>
 
-          {/* Mode Switcher Tabs: Sign In ⇄ Sign Up */}
-          <div className="flex rounded-2xl bg-slate-950/60 p-1 border border-white/10 mb-6 text-xs font-semibold backdrop-blur-md">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(false);
-                setErrorMessage(null);
-                setSuccessMessage(null);
-              }}
-              className={`flex-1 py-2.5 rounded-xl transition-all cursor-pointer ${
-                !isSignUp
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(56,189,248,0.4)]"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(true);
-                setErrorMessage(null);
-                setSuccessMessage(null);
-              }}
-              className={`flex-1 py-2.5 rounded-xl transition-all cursor-pointer ${
-                isSignUp
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(56,189,248,0.4)]"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Sign Up
-            </button>
+        {/* Newspaper Masthead */}
+        <div className="border-t border-slate-800/80 py-4 bg-[#080c16]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <div className="flex flex-col">
+              <Link href="/" className="group inline-flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl font-black tracking-tight text-white font-serif">
+                  CHEF MIZAN <span className="text-rose-500">.</span>
+                </span>
+                <span className="text-xs uppercase tracking-widest text-slate-400 font-mono font-bold">
+                  THE BORDERS UNFOLDED
+                </span>
+              </Link>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Investigative Geopolitics • Border Anomalies • Sovereign History • Global Reports
+              </p>
+            </div>
+
+            <div className="hidden lg:flex items-center gap-4 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl text-xs text-slate-400">
+              <Flame className="w-4 h-4 text-rose-500 animate-pulse" />
+              <span>Domain: <strong>chefmizan.cyou</strong> | YouTube: <strong>@TheBordersUnfolded</strong></span>
+            </div>
           </div>
+        </div>
 
-          {/* Success Message Banner */}
-          {successMessage && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs text-center flex items-center justify-center gap-2 animate-in fade-in duration-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span>{successMessage}</span>
+        {/* Categories Bar Navigation */}
+        <div className="border-t border-slate-800 bg-[#0b1120]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <nav className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto py-2.5 scrollbar-none text-sm font-medium">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all text-xs sm:text-sm ${
+                      selectedCategory === cat
+                        ? "bg-rose-600 text-white font-bold shadow-md shadow-rose-900/30"
+                        : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </nav>
+
+              <div className="hidden md:flex items-center pl-4 border-l border-slate-800 text-slate-400">
+                <Search className="w-4 h-4 cursor-pointer hover:text-white transition" />
+              </div>
             </div>
-          )}
+          </div>
+        </div>
+      </header>
 
-          {/* Error Message Banner */}
-          {errorMessage && (
-            <div className="mb-5 p-3 rounded-2xl bg-rose-950/70 border border-rose-500/30 text-rose-200 text-xs text-center">
-              {errorMessage}
+      {/* Breaking News Ribbon */}
+      {breakingNews.length > 0 && (
+        <div className="bg-gradient-to-r from-rose-950/70 via-slate-900 to-slate-900 border-b border-rose-900/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-3 text-xs sm:text-sm">
+            <span className="bg-rose-600 text-white font-black px-2.5 py-0.5 rounded text-[11px] tracking-wider uppercase flex items-center gap-1 shadow-sm">
+              <Flame className="w-3.5 h-3.5 fill-current" /> BREAKING
+            </span>
+            <div className="overflow-hidden whitespace-nowrap text-slate-200 font-medium">
+              <span className="hover:text-rose-400 cursor-pointer transition">
+                {breakingNews[0].title} — {breakingNews[0].summary}
+              </span>
             </div>
-          )}
+          </div>
+        </div>
+      )}
 
-          {/* Interactive Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* If Sign Up: 1. Full Name */}
-            {isSignUp && (
-              <div className="space-y-1.5 animate-in fade-in duration-300">
-                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-300">
-                  Full Name *
-                </label>
-                <div className="relative group">
-                  <User className="w-4 h-4 text-sky-400/70 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-sky-300" />
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. MD Mizanur Rahman"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/50 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400/60 focus:bg-slate-950/70 focus:ring-2 focus:ring-sky-400/20 transition-all backdrop-blur-md"
-                  />
+      {/* Main Newspaper Grid */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Hero Section: Lead Story (8 Cols) + Sidebar Spotlight (4 Cols) */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10 border-b border-slate-800">
+          
+          {/* Main Lead Story */}
+          <div className="lg:col-span-8 flex flex-col justify-between">
+            <div className="group cursor-pointer" onClick={() => setActiveArticle(leadArticle)}>
+              <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 mb-5 shadow-2xl">
+                <img 
+                  src={leadArticle.image} 
+                  alt={leadArticle.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+                
+                {leadArticle.youtubeId && (
+                  <div className="absolute top-4 right-4 bg-rose-600 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                    <Play className="w-3.5 h-3.5 fill-white" /> EXCLUSIVE VIDEO
+                  </div>
+                )}
+
+                <div className="absolute bottom-4 left-4 right-4">
+                  <span className="inline-block px-3 py-1 rounded bg-rose-600 text-white text-xs font-bold uppercase tracking-wider mb-2">
+                    {leadArticle.category}
+                  </span>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight font-serif group-hover:text-rose-400 transition-colors">
+                    {leadArticle.title}
+                  </h1>
                 </div>
               </div>
-            )}
 
-            {/* Email or Phone Number */}
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-300">
-                {isSignUp ? "Email or Mobile Number *" : "Email or Username *"}
-              </label>
-              <div className="relative group">
-                {isSignUp ? (
-                  <Phone className="w-4 h-4 text-sky-400/70 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-sky-300" />
-                ) : (
-                  <Mail className="w-4 h-4 text-sky-400/70 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-sky-300" />
-                )}
-                <input
-                  type="text"
-                  required
-                  placeholder={isSignUp ? "name@example.com or +8801700..." : "name@chefmizan.cyou"}
-                  value={emailOrPhone}
-                  onChange={(e) => setEmailOrPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/50 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400/60 focus:bg-slate-950/70 focus:ring-2 focus:ring-sky-400/20 transition-all backdrop-blur-md"
-                />
-              </div>
+              <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-4">
+                {leadArticle.summary}
+              </p>
             </div>
 
-            {/* Password */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-300">
-                  Password *
-                </label>
-                {!isSignUp && (
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Password reset instructions sent.");
-                    }}
-                    className="text-[11px] text-sky-400/80 hover:text-sky-300 transition-colors"
-                  >
-                    Forgot?
-                  </a>
-                )}
+            {/* Engagement Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800/80 text-xs sm:text-sm text-slate-400">
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-slate-500" /> {leadArticle.publishedAt}
+                </span>
+                <span>•</span>
+                <span>{leadArticle.reads.toLocaleString()} readers viewed</span>
               </div>
-              <div className="relative group">
-                <Lock className="w-4 h-4 text-sky-400/70 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-sky-300" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-11 py-3 rounded-2xl bg-slate-950/50 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400/60 focus:bg-slate-950/70 focus:ring-2 focus:ring-sky-400/20 transition-all backdrop-blur-md"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-white transition-colors cursor-pointer"
+
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => handleLike(leadArticle.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
+                    likedArticles[leadArticle.id]
+                      ? "bg-rose-600/20 text-rose-400 border-rose-500/40 font-bold"
+                      : "bg-slate-800/60 text-slate-300 border-slate-700/60 hover:bg-slate-800"
+                  }`}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <ThumbsUp className={`w-4 h-4 ${likedArticles[leadArticle.id] ? "fill-rose-500" : ""}`} />
+                  <span>{leadArticle.likes}</span>
+                </button>
+
+                <button 
+                  onClick={() => setActiveArticle(leadArticle)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 text-slate-300 border border-slate-700/60 hover:bg-slate-800 transition"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>{leadArticle.comments.length} Comments</span>
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* If Sign Up: 4. Confirm Password */}
-            {isSignUp && (
-              <div className="space-y-1.5 animate-in fade-in duration-300">
-                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-300">
-                  Confirm Password *
-                </label>
-                <div className="relative group">
-                  <ShieldCheck className="w-4 h-4 text-sky-400/70 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-sky-300" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder="Repeat your password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/50 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400/60 focus:bg-slate-950/70 focus:ring-2 focus:ring-sky-400/20 transition-all backdrop-blur-md"
-                  />
+          {/* Sidebar News Stack */}
+          <div className="lg:col-span-4 flex flex-col space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-rose-600">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-rose-500" /> Top Investigations
+              </h2>
+              <span className="text-xs text-slate-400">Live Wire</span>
+            </div>
+
+            <div className="divide-y divide-slate-800/80 flex flex-col space-y-4">
+              {sideArticles.map(article => (
+                <div 
+                  key={article.id} 
+                  className="pt-4 first:pt-0 group cursor-pointer"
+                  onClick={() => setActiveArticle(article)}
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className="w-24 h-24 sm:w-28 sm:h-24 rounded-xl overflow-hidden bg-slate-900 flex-shrink-0 relative border border-slate-800">
+                      <img 
+                        src={article.image} 
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+                      />
+                      {article.youtubeId && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <Play className="w-5 h-5 text-white fill-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-[11px] font-semibold text-rose-400 uppercase tracking-wider block mb-1">
+                        {article.category}
+                      </span>
+                      <h3 className="text-sm font-bold text-slate-100 group-hover:text-rose-400 leading-snug line-clamp-2 transition-colors">
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-500">
+                        <span>{article.publishedAt}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <ThumbsUp className="w-3 h-3" /> {article.likes}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* YouTube Channel Spotlight Banner */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-950/40 via-slate-900 to-slate-900 border border-rose-900/40 text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-600/20 border border-rose-500/30 mx-auto flex items-center justify-center mb-3">
+                <Play className="w-6 h-6 text-rose-500 fill-rose-500" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1">The Borders Unfolded</h4>
+              <p className="text-xs text-slate-400 mb-4">Investigating geopolitical anomalies, border treaties, and disputed territories worldwide.</p>
+              <a 
+                href="https://www.youtube.com/@TheBordersUnfolded" 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-lg shadow-rose-950 w-full justify-center"
+              >
+                Watch on YouTube <ChevronRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Global News Grid */}
+        <section className="pt-10">
+          <div className="flex items-center justify-between mb-6 pb-3 border-b-2 border-slate-800">
+            <h2 className="text-xl font-black text-white tracking-wide">
+              {selectedCategory}
+            </h2>
+            <span className="text-xs text-slate-400">{filteredArticles.length} Reports Published</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArticles.map(article => (
+              <div 
+                key={article.id}
+                className="bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden flex flex-col justify-between hover:border-slate-700 transition duration-300 group"
+              >
+                <div>
+                  <div 
+                    className="relative aspect-video overflow-hidden cursor-pointer bg-slate-950"
+                    onClick={() => setActiveArticle(article)}
+                  >
+                    <img 
+                      src={article.image} 
+                      alt={article.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
+                    />
+                    <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded text-[11px] font-bold text-rose-400 border border-slate-800">
+                      {article.category}
+                    </div>
+                    {article.youtubeId && (
+                      <div className="absolute bottom-3 right-3 bg-rose-600 text-white p-1.5 rounded-full shadow-lg">
+                        <Play className="w-3.5 h-3.5 fill-white" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5">
+                    <h3 
+                      onClick={() => setActiveArticle(article)}
+                      className="text-base font-bold text-slate-100 group-hover:text-rose-400 leading-snug cursor-pointer line-clamp-2 transition mb-2"
+                    >
+                      {article.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                      {article.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-5 py-3 border-t border-slate-800/60 bg-slate-900/40 flex items-center justify-between text-xs text-slate-400">
+                  <span>{article.publishedAt}</span>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => handleLike(article.id)}
+                      className={`flex items-center gap-1 transition ${likedArticles[article.id] ? "text-rose-400 font-bold" : "hover:text-white"}`}
+                    >
+                      <ThumbsUp className={`w-3.5 h-3.5 ${likedArticles[article.id] ? "fill-rose-500" : ""}`} />
+                      <span>{article.likes}</span>
+                    </button>
+                    <button 
+                      onClick={() => setActiveArticle(article)}
+                      className="flex items-center gap-1 hover:text-white transition"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>{article.comments.length}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+            ))}
+          </div>
+        </section>
+      </main>
 
-            {/* Helper Bar: Remember me + Quick Demo */}
-            <div className="flex items-center justify-between pt-1">
-              {!isSignUp ? (
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-700 bg-slate-900/60 text-sky-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+      {/* Article Reader Modal */}
+      {activeArticle && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#0b1120] border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            
+            <button 
+              onClick={() => setActiveArticle(null)}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition z-10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="p-6 sm:p-8">
+              <span className="inline-block px-3 py-1 rounded-full bg-rose-600/20 text-rose-400 text-xs font-bold mb-3 border border-rose-500/30">
+                {activeArticle.category}
+              </span>
+
+              <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight font-serif mb-4">
+                {activeArticle.title}
+              </h1>
+
+              <div className="flex items-center gap-4 text-xs text-slate-400 pb-5 border-b border-slate-800 mb-6">
+                <span>Published: {activeArticle.publishedAt}</span>
+                <span>•</span>
+                <span>{activeArticle.reads} Reads</span>
+              </div>
+
+              {activeArticle.youtubeId ? (
+                <div className="relative aspect-video rounded-2xl overflow-hidden mb-6 border border-slate-800 bg-black">
+                  <iframe 
+                    src={`https://www.youtube.com/embed/${activeArticle.youtubeId}`} 
+                    title={activeArticle.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full border-0"
                   />
-                  <span className="text-xs text-slate-400 hover:text-slate-300">
-                    Remember me
-                  </span>
-                </label>
+                </div>
               ) : (
-                <span className="text-[11px] text-slate-400">
-                  By joining, you agree to portal terms
-                </span>
+                <div className="rounded-2xl overflow-hidden mb-6 border border-slate-800">
+                  <img src={activeArticle.image} alt={activeArticle.title} className="w-full h-auto object-cover" />
+                </div>
               )}
 
-              <button
-                type="button"
-                onClick={handleQuickDemo}
-                className="inline-flex items-center gap-1 text-[11px] text-amber-400/90 hover:text-amber-300 transition-colors bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20 cursor-pointer"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Auto-fill Demo</span>
-              </button>
-            </div>
+              <div className="prose prose-invert max-w-none text-slate-200 text-base sm:text-lg leading-relaxed whitespace-pre-line mb-8">
+                {activeArticle.content}
+              </div>
 
-            {/* Submit Button */}
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={isLoading}
-                onClick={handleButtonClick}
-                className="relative w-full py-3.5 rounded-2xl overflow-hidden bg-gradient-to-r from-sky-500 via-sky-400 to-amber-500 text-slate-950 font-bold uppercase tracking-wider text-xs shadow-[0_0_25px_rgba(56,189,248,0.4)] hover:shadow-[0_0_35px_rgba(56,189,248,0.6)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
-              >
-                {/* Expanding Click Water Ripples inside Button */}
-                {btnRipples.map((r) => (
-                  <span
-                    key={r.id}
-                    className="absolute rounded-full bg-white/40 pointer-events-none animate-ping"
-                    style={{
-                      left: r.x - 20,
-                      top: r.y - 20,
-                      width: 40,
-                      height: 40,
-                    }}
-                  />
-                ))}
-
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>{isSignUp ? "Sign Up & Enter Portal" : "Sign In to Dashboard"}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-
-          {/* Bottom Switcher text */}
-          <div className="mt-6 text-center text-xs text-slate-400">
-            {isSignUp ? (
-              <p>
-                Already registered?{" "}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(false)}
-                  className="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4 cursor-pointer"
+              <div className="flex items-center justify-between py-4 border-y border-slate-800 my-6">
+                <button 
+                  onClick={() => handleLike(activeArticle.id)}
+                  className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition ${
+                    likedArticles[activeArticle.id]
+                      ? "bg-rose-600 text-white shadow-lg shadow-rose-900/40"
+                      : "bg-slate-800 text-slate-200 hover:bg-slate-700"
+                  }`}
                 >
-                  Sign In instead
+                  <ThumbsUp className="w-4 h-4" />
+                  <span>Like ({activeArticle.likes})</span>
                 </button>
-              </p>
-            ) : (
-              <p>
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(true)}
-                  className="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4 cursor-pointer"
-                >
-                  Create one now (Sign Up)
-                </button>
-              </p>
-            )}
+
+                <div className="text-xs text-slate-400">
+                  {activeArticle.comments.length} Reader Comments
+                </div>
+              </div>
+
+              {/* Reader Comments */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-rose-500" /> Discussion & Analysis
+                </h3>
+
+                <div className="flex gap-3">
+                  <div className="w-9 h-9 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center flex-shrink-0 text-sm">
+                    {userName[0]}
+                  </div>
+                  <div className="flex-1 flex gap-2">
+                    <input 
+                      type="text" 
+                      value={commentInputs[activeArticle.id] || ""}
+                      onChange={(e) => setCommentInputs({ ...commentInputs, [activeArticle.id]: e.target.value })}
+                      onKeyDown={(e) => e.key === "Enter" && handleAddComment(activeArticle.id)}
+                      placeholder="Write your analysis or thoughts (Press Enter)..."
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
+                    />
+                    <button 
+                      onClick={() => handleAddComment(activeArticle.id)}
+                      className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+                    >
+                      <Send className="w-3.5 h-3.5" /> Post
+                    </button>
+                  </div>
+                </div>
+
+                <div className="divide-y divide-slate-800/60 pt-2">
+                  {activeArticle.comments.length === 0 ? (
+                    <p className="text-xs text-slate-500 py-3">No comments yet. Be the first to share your perspective!</p>
+                  ) : (
+                    activeArticle.comments.map(c => (
+                      <div key={c.id} className="py-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-slate-200">{c.author}</span>
+                          <span className="text-[10px] text-slate-500">{c.time}</span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-300">{c.text}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Bottom Water Glow Effect */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1 bg-gradient-to-r from-transparent via-sky-400/40 to-transparent blur-sm" />
         </div>
-      </div>
-    </main>
+      )}
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 bg-[#080c16] py-12 text-slate-400 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-2">
+            <h3 className="text-white text-lg font-bold font-serif mb-2">CHEF MIZAN • The Borders Unfolded</h3>
+            <p className="text-slate-400 leading-relaxed mb-4">
+              An independent investigative platform exploring global sovereign anomalies, historical border treaties, and geopolitical curiosities.
+            </p>
+            <p className="text-slate-500">© 2026 All Rights Reserved | chefmizan.cyou</p>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold mb-3">Categories</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="hover:text-rose-400">Border Anomalies</a></li>
+              <li><a href="#" className="hover:text-rose-400">Geopolitical Treaties</a></li>
+              <li><a href="#" className="hover:text-rose-400">Investigative Shorts</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold mb-3">Connect</h4>
+            <ul className="space-y-2">
+              <li><a href="https://www.youtube.com/@TheBordersUnfolded" target="_blank" className="hover:text-rose-400">YouTube: @TheBordersUnfolded</a></li>
+              <li><a href="https://facebook.com/Chefmizan7" target="_blank" className="hover:text-rose-400">Facebook: Chefmizan7</a></li>
+              <li><a href="https://instagram.com/chefmizan" target="_blank" className="hover:text-rose-400">Instagram: @chefmizan</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+    </div>
   );
 }

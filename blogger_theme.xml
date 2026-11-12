@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsversion='3' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+  <meta content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+  <link href='https://chefmizan.cyou' rel='canonical'/>
+
+  <meta content='Chef Mizan (The Borders Unfolded) — Investigating Earth Unexplained Border Anomalies, Geopolitical Wonders &amp; Verified Global Geography News' name='description'/>
+  <meta content='Chef Mizan, The Borders Unfolded, chefmizan.cyou, Prothom Alo Style News, Geography Anomalies, World Mysteries' name='keywords'/>
+
+  <b:include data='blog' name='all-head-content'/>
+
+  <link href='https://fonts.googleapis.com' rel='preconnect'/>
+  <link crossorigin='anonymous' href='https://fonts.gstatic.com' rel='preconnect'/>
+  <link href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap' rel='stylesheet'/>
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' rel='stylesheet'/>
+
+  <b:skin><![CDATA[
+    :root {
+      --bg-body: #06090f;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #38bdf8;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      background-color: var(--bg-body) !important;
+      color: var(--text-main) !important;
+      font-family: var(--font);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Top Breaking News Bar */
+    .ticker-bar {
+      background: #020408;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.4rem 1.5rem;
+      font-size: 0.8rem;
+    }
+    .ticker-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .ticker-badge {
+      background: var(--danger);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ticker-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+    .ticker-text {
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Navigation Header */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 9, 15, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.9rem 1.5rem;
+    }
+    .nav-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .brand-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38bdf8, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #06090f;
+      font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+    .brand-info h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .brand-domain {
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .header-socials {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .social-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      transition: all 0.25s ease;
+    }
+    .social-btn:hover { transform: translateY(-2px); color: #fff; }
+    .social-btn.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-btn.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-btn.ig:hover { background: #d6249f; border-color: #d6249f; }
+    .social-btn.th:hover { background: #000; border-color: #fff; }
+
+    /* Category Strip (Prothom Alo style subnav) */
+    .category-strip {
+      background: rgba(18, 24, 38, 0.6);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.65rem 1.5rem;
+    }
+    .category-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .category-container a:hover, .category-container a.active {
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    .layout-wrapper {
+      max-width: 1240px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Prothom Alo Newsfeed Grid */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    /* News Article Card */
+    .news-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+    .news-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .news-thumb-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #090e17;
+      overflow: hidden;
+    }
+    .news-thumb-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .news-card:hover .news-thumb-wrap img {
+      transform: scale(1.05);
+    }
+
+    .news-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(6, 9, 15, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .news-content {
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .news-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .news-card:hover .news-title {
+      color: var(--primary);
+    }
+    .news-snippet {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .news-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: #64748b;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+    }
+    .news-meta span.author {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Single Article Page */
+    .single-page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .single-page h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+    .single-body {
+      font-size: 1.05rem;
+      color: #cbd5e1;
+      line-height: 1.85;
+      margin-top: 1.5rem;
+    }
+    .single-body iframe {
+      width: 100% !important;
+      border-radius: 16px;
+      border: 0;
+      margin: 1.5rem 0;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      background: #04060a;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .news-grid { grid-template-columns: 1fr; }
+      .navbar { padding: 0.75rem 1rem; }
+      .brand-info h1 { font-size: 1.1rem; }
+      .header-socials { gap: 0.35rem; }
+      .social-btn { width: 32px; height: 32px; font-size: 0.95rem; }
+    }
+  ]]></b:skin>
+</head>
+<body>
+
+  <!-- Prothom Alo Style Breaking Ticker -->
+  <div class='ticker-bar'>
+    <div class='ticker-inner'>
+      <div class='ticker-badge'>Dispatches</div>
+      <div class='ticker-text'>Investigating real border mysteries, territorial enclaves, and global geography news.</div>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header class='navbar'>
+    <div class='nav-container'>
+      <a class='brand' expr:href='data:blog.homepageUrl'>
+        <div class='brand-avatar'>CM</div>
+        <div class='brand-info'>
+          <h1>Chef Mizan</h1>
+          <div class='brand-domain'>chefmizan.cyou</div>
+        </div>
+      </a>
+
+      <!-- Socials -->
+      <div class='header-socials'>
+        <a aria-label='YouTube' class='social-btn yt' href='https://www.youtube.com/@TheBordersUnfolded' target='_blank'>
+          <i class='fa-brands fa-youtube'/>
+        </a>
+        <a aria-label='Facebook' class='social-btn fb' href='https://www.facebook.com/Chefmizan7' target='_blank'>
+          <i class='fa-brands fa-facebook-f'/>
+        </a>
+        <a aria-label='Instagram' class='social-btn ig' href='https://www.instagram.com/chefmizan/' target='_blank'>
+          <i class='fa-brands fa-instagram'/>
+        </a>
+        <a aria-label='Threads' class='social-btn th' href='https://www.threads.com/@chefmizan' target='_blank'>
+          <i class='fa-brands fa-threads'/>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- News Category Subnav -->
+  <div class='category-strip'>
+    <div class='category-container'>
+      <a class='active' expr:href='data:blog.homepageUrl'>All News &amp; Dispatches</a>
+      <a href='#geography'>Border Anomalies</a>
+      <a href='#enclaves'>Forgotten Enclaves</a>
+      <a href='#investigations'>Investigations</a>
+      <a href='https://www.youtube.com/@TheBordersUnfolded' target='_blank'>Video Channel</a>
+    </div>
+  </div>
+
+  <!-- News Feed Layout -->
+  <main class='layout-wrapper'>
+    <b:section id='main-content' showaddelement='yes'>
+      <b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='2'>
+        <b:includable id='main' var='top'>
+          <b:if cond='data:view.isMultipleItems'>
+            <div class='news-grid'>
+              <b:loop values='data:posts' var='post'>
+                <article class='news-card'>
+                  <a class='news-thumb-wrap' expr:href='data:post.url'>
+                    <b:if cond='data:post.featuredImage'>
+                      <img alt='Article' expr:src='data:post.featuredImage'/>
+                    <b:else/>
+                      <img alt='Article' src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&amp;fit=crop&amp;w=800&amp;q=80'/>
+                    </b:if>
+                    <div class='news-tag'>Investigation</div>
+                  </a>
+                  <div class='news-content'>
+                    <div>
+                      <h2 class='news-title'>
+                        <a expr:href='data:post.url'><data:post.title/></a>
+                      </h2>
+                      <p class='news-snippet'>
+                        <data:post.snippets.short/>
+                      </p>
+                    </div>
+                    <div class='news-meta'>
+                      <span class='author'>Chef Mizan</span>
+                      <span>&#8226;</span>
+                      <span><data:post.date/></span>
+                    </div>
+                  </div>
+                </article>
+              </b:loop>
+            </div>
+          <b:else/>
+            <b:loop values='data:posts' var='post'>
+              <div class='single-page'>
+                <h1><data:post.title/></h1>
+                <div class='news-meta' style='margin-bottom: 1.5rem;'>
+                  <span class='author'>Investigation by Chef Mizan</span>
+                  <span>&#8226;</span>
+                  <span>Published: <data:post.date/></span>
+                </div>
+                <div class='single-body'>
+                  <data:post.body/>
+                </div>
+              </div>
+            </b:loop>
+          </b:if>
+        </b:includable>
+      </b:widget>
+    </b:section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&#169; <data:blog.title/> &#8212; The Borders Unfolded Media Network (<a href='https://chefmizan.cyou' style='color: var(--primary); font-weight:700;'>chefmizan.cyou</a>)</p>
+    <p style='margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;'>Documenting Real Border Anomalies, Enclaves &amp; Global Geography News</p>
+  </footer>
+
+</body>
+</html>
