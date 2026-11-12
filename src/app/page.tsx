@@ -14,7 +14,9 @@ import {
   Send,
   Globe,
   X,
-  Check
+  Check,
+  ShieldCheck,
+  Lock
 } from "lucide-react";
 
 interface Comment {
@@ -138,10 +140,16 @@ export default function HomePage() {
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [userName, setUserName] = useState("Chef Mizan");
 
+  // Auth State: Only admins see "+ Write Post"
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLoginModal, setShowAdminLoginModal] = useState(false);
+  const [adminPin, setAdminPin] = useState("");
+  const [pinError, setPinError] = useState(false);
+
   // Custom Language State
   const [currentLang, setCurrentLang] = useState("en");
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [currentDateStr, setCurrentDateStr] = useState("Wednesday, Nov 13, 2026");
+  const [currentDateStr, setCurrentDateStr] = useState("Friday, Nov 13, 2026");
 
   useEffect(() => {
     setCurrentDateStr(
@@ -155,12 +163,36 @@ export default function HomePage() {
       } catch (e) {}
     }
 
-    // Check existing google translate cookie
+    // Check admin session
+    if (localStorage.getItem("admin_session") === "active") {
+      setIsAdmin(true);
+    }
+
+    // Check google translate cookie
     const match = document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
     if (match && match[1]) {
       setCurrentLang(match[1]);
     }
   }, []);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simple PIN for Chef Mizan editor access (or default 7860)
+    if (adminPin === "7860" || adminPin === "1234" || adminPin === "mizan") {
+      setIsAdmin(true);
+      localStorage.setItem("admin_session", "active");
+      setShowAdminLoginModal(false);
+      setAdminPin("");
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    localStorage.removeItem("admin_session");
+  };
 
   const changeLanguage = (langCode: string) => {
     setCurrentLang(langCode);
@@ -173,7 +205,6 @@ export default function HomePage() {
       return;
     }
 
-    // Set google translate cookies
     document.cookie = `googtrans=/en/${langCode}; path=/;`;
     document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/;`;
     window.location.reload();
@@ -228,7 +259,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100 font-sans selection:bg-rose-600 selection:text-white">
       
-      {/* Top Bar with Date, Universal Language Selector, & Publishing Portal */}
+      {/* Top Bar with Date, Universal Language Selector, & Admin Guard */}
       <header className="border-b border-slate-800 bg-[#090e1a]/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 text-sm">
@@ -245,9 +276,10 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* Custom English/Native Language Selector Dropdown */}
+            {/* Language Translator & Conditional Admin Button */}
             <div className="flex items-center space-x-3 sm:space-x-4">
               
+              {/* Language Selector */}
               <div className="relative">
                 <button
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
@@ -260,7 +292,6 @@ export default function HomePage() {
                   </span>
                 </button>
 
-                {/* Dropdown Menu in English & Native Script */}
                 {isLangMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-[#0f172a] border border-slate-700/80 rounded-2xl shadow-2xl py-2 z-50 max-h-80 overflow-y-auto">
                     <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
@@ -285,13 +316,32 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* Admin Dashboard Link */}
-              <Link 
-                href="/dashboard" 
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-md shadow-rose-950"
-              >
-                + Write Post
-              </Link>
+              {/* ADMIN ONLY BUTTON: Hidden for regular visitors */}
+              {isAdmin ? (
+                <div className="flex items-center gap-2">
+                  <Link 
+                    href="/dashboard" 
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-md shadow-rose-950"
+                  >
+                    + Write Post
+                  </Link>
+                  <button 
+                    onClick={handleAdminLogout}
+                    className="text-[11px] text-slate-400 hover:text-rose-400 transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowAdminLoginModal(true)}
+                  className="text-[11px] text-slate-500 hover:text-slate-300 transition flex items-center gap-1"
+                  title="Editor Access"
+                >
+                  <Lock className="w-3 h-3" />
+                </button>
+              )}
+
             </div>
           </div>
         </div>
@@ -367,7 +417,7 @@ export default function HomePage() {
       {/* Main Newspaper Grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Hero Section: Lead Story (8 Cols) + Sidebar Spotlight (4 Cols) */}
+        {/* Hero Section */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10 border-b border-slate-800">
           
           {/* Main Lead Story */}
@@ -485,7 +535,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* YouTube Channel Spotlight Banner */}
+            {/* YouTube Spotlight Banner */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-950/40 via-slate-900 to-slate-900 border border-rose-900/40 text-center">
               <div className="w-12 h-12 rounded-full bg-rose-600/20 border border-rose-500/30 mx-auto flex items-center justify-center mb-3">
                 <Play className="w-6 h-6 text-rose-500 fill-rose-500" />
@@ -576,6 +626,43 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
+      {/* Admin Login Modal (Unlocked only by PIN) */}
+      {showAdminLoginModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0f172a] border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
+            <button 
+              onClick={() => setShowAdminLoginModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="text-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-rose-600/20 text-rose-500 flex items-center justify-center mx-auto mb-2 border border-rose-500/30">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Editor Access PIN</h3>
+              <p className="text-xs text-slate-400 mt-1">Enter your admin PIN to unlock the "+ Write Post" dashboard button.</p>
+            </div>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <input 
+                type="password"
+                value={adminPin}
+                onChange={(e) => setAdminPin(e.target.value)}
+                placeholder="Enter PIN (e.g. 7860)"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center text-white tracking-widest text-lg focus:outline-none focus:border-rose-500"
+              />
+              {pinError && <p className="text-xs text-rose-400 text-center">Incorrect PIN. Try 7860 or 1234</p>}
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition"
+              >
+                Unlock Editorial Desk
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Article Reader Modal */}
       {activeArticle && (
