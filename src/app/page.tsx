@@ -223,13 +223,18 @@ export default function HomePage() {
     localStorage.setItem("portal_articles", JSON.stringify(updated));
   };
 
+  const [userNameInput, setUserNameInput] = useState("");
+  const [userCommentText, setUserCommentText] = useState("");
+
   const handleAddComment = (articleId: string) => {
-    const text = commentInputs[articleId]?.trim();
+    const text = userCommentText.trim();
     if (!text) return;
+
+    const authorName = userNameInput.trim() || "Global Reader";
 
     const newComment: Comment = {
       id: Date.now().toString(),
-      author: userName || "Global Reader",
+      author: authorName,
       text,
       time: "Just now"
     };
@@ -242,7 +247,16 @@ export default function HomePage() {
     });
 
     setArticles(updated);
-    setCommentInputs(prev => ({ ...prev, [articleId]: "" }));
+    setUserCommentText("");
+    
+    // Also update the activeArticle modal state instantly so reader sees it immediately without refresh!
+    if (activeArticle && activeArticle.id === articleId) {
+      setActiveArticle({
+        ...activeArticle,
+        comments: [newComment, ...activeArticle.comments]
+      });
+    }
+
     localStorage.setItem("portal_articles", JSON.stringify(updated));
   };
 
@@ -735,25 +749,32 @@ export default function HomePage() {
                   <MessageSquare className="w-5 h-5 text-rose-500" /> Discussion & Analysis
                 </h3>
 
-                <div className="flex gap-3">
-                  <div className="w-9 h-9 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center flex-shrink-0 text-sm">
-                    {userName[0]}
-                  </div>
-                  <div className="flex-1 flex gap-2">
+                {/* Reader Comments Input Area with Custom Name & Real-time Submission */}
+                <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input 
                       type="text" 
-                      value={commentInputs[activeArticle.id] || ""}
-                      onChange={(e) => setCommentInputs({ ...commentInputs, [activeArticle.id]: e.target.value })}
-                      onKeyDown={(e) => e.key === "Enter" && handleAddComment(activeArticle.id)}
-                      placeholder="Write your analysis or thoughts (Press Enter)..."
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
+                      value={userNameInput}
+                      onChange={(e) => setUserNameInput(e.target.value)}
+                      placeholder="Your Name (e.g. John Doe / মাহি রহমান)"
+                      className="w-full sm:w-1/3 bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
                     />
-                    <button 
-                      onClick={() => handleAddComment(activeArticle.id)}
-                      className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
-                    >
-                      <Send className="w-3.5 h-3.5" /> Post
-                    </button>
+                    <div className="flex-1 flex gap-2">
+                      <input 
+                        type="text" 
+                        value={userCommentText}
+                        onChange={(e) => setUserCommentText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleAddComment(activeArticle.id)}
+                        placeholder="Write your analysis or thoughts (Press Enter)..."
+                        className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                      />
+                      <button 
+                        onClick={() => handleAddComment(activeArticle.id)}
+                        className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-950 flex-shrink-0"
+                      >
+                        <Send className="w-3.5 h-3.5" /> Post
+                      </button>
+                    </div>
                   </div>
                 </div>
 
