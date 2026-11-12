@@ -19,15 +19,11 @@ export default function DashboardPage() {
   const [isBreaking, setIsBreaking] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Exact Secret PINs allowed: User requested "Mizanur@@@777" (along with 7860 fallback)
+  // Strictly ONLY User PINs: "6492" (or "Mizanur@@@777") - NO HINTS GIVEN
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanPin = pinInput.trim();
-    if (
-      cleanPin === "Mizanur@@@777" || 
-      cleanPin === "mizanur@@@777" || 
-      cleanPin === "7860"
-    ) {
+    const clean = pinInput.trim();
+    if (clean === "6492" || clean === "Mizanur@@@777") {
       setIsAuthenticated(true);
       setPinError(false);
     } else {
@@ -73,34 +69,32 @@ export default function DashboardPage() {
     }, 1200);
   };
 
-  // Mandatory PIN Lock Screen: NEVER bypassed without entering the password
+  // 100% Secure Gatekeeper with NO hints, clues, or default texts
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#070b14] text-slate-100 flex items-center justify-center p-4 selection:bg-rose-600">
-        <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-8 shadow-2xl text-center">
+        <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-8 shadow-2xl text-center">
           <div className="w-16 h-16 rounded-2xl bg-rose-600/20 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
             <Lock className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl font-bold text-white font-serif mb-1">Editor Gatekeeper</h2>
+          <h2 className="text-xl font-bold text-white font-serif mb-1">Editor Gatekeeper</h2>
           <p className="text-xs text-slate-400 mb-6">
-            Enter your Chef Mizan master security key to publish or manage stories.
+            Enter authorized security PIN to access the dispatch desk.
           </p>
 
           <form onSubmit={handleUnlock} className="space-y-4">
-            <div className="relative">
-              <input 
-                type="password"
-                autoFocus
-                value={pinInput}
-                onChange={(e) => setPinInput(e.target.value)}
-                placeholder="Enter Secret Key"
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3.5 text-center text-white text-base tracking-widest font-mono focus:outline-none focus:border-rose-500 transition shadow-inner"
-              />
-            </div>
+            <input 
+              type="password"
+              autoFocus
+              value={pinInput}
+              onChange={(e) => setPinInput(e.target.value)}
+              placeholder="••••"
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-center text-white text-xl tracking-widest font-mono focus:outline-none focus:border-rose-500 transition shadow-inner"
+            />
 
             {pinError && (
               <p className="text-xs text-rose-400 font-semibold bg-rose-950/40 border border-rose-900/50 py-2 rounded-xl">
-                ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।
+                Access Denied. Incorrect Security Key.
               </p>
             )}
 
@@ -108,7 +102,7 @@ export default function DashboardPage() {
               type="submit"
               className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-rose-950 flex items-center justify-center gap-2"
             >
-              <KeyRound className="w-4 h-4" /> আনলক করুন (Unlock)
+              <KeyRound className="w-4 h-4" /> Unlock Dashboard
             </button>
           </form>
 
