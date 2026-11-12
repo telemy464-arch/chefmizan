@@ -141,8 +141,13 @@ export default function HomePage() {
   // Custom Language State
   const [currentLang, setCurrentLang] = useState("en");
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [currentDateStr, setCurrentDateStr] = useState("Wednesday, Nov 13, 2026");
 
   useEffect(() => {
+    setCurrentDateStr(
+      new Date().toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })
+    );
+
     const saved = localStorage.getItem("portal_articles");
     if (saved) {
       try {
@@ -232,7 +237,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-4 text-xs text-slate-400">
               <span className="flex items-center gap-1.5 font-medium text-slate-300">
                 <Clock className="w-3.5 h-3.5 text-rose-500" />
-                {new Date().toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}
+                {currentDateStr}
               </span>
               <span className="hidden sm:inline-block text-slate-600">•</span>
               <span className="hidden sm:inline-block text-rose-400 font-semibold uppercase tracking-wider text-[11px]">
