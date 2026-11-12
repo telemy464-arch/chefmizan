@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, PlusCircle, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowLeft, PlusCircle, CheckCircle2, Sparkles, Lock, ShieldCheck } from "lucide-react";
 
 export default function DashboardPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Border Anomalies");
   const [summary, setSummary] = useState("");
@@ -14,6 +18,24 @@ export default function DashboardPage() {
   const [isLead, setIsLead] = useState(false);
   const [isBreaking, setIsBreaking] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    // Check if previously unlocked in this browser session
+    if (sessionStorage.getItem("admin_pin_unlocked") === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === "7860" || pinInput === "1234" || pinInput === "mizan") {
+      setIsAuthenticated(true);
+      sessionStorage.setItem("admin_pin_unlocked", "true");
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +75,50 @@ export default function DashboardPage() {
     }, 1200);
   };
 
+  // If not unlocked with PIN, show secure lock screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0b1120] text-slate-100 flex items-center justify-center p-4">
+        <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-8 shadow-2xl text-center">
+          <div className="w-14 h-14 rounded-2xl bg-rose-600/20 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
+            <Lock className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-bold text-white font-serif mb-1">Editor Access Required</h2>
+          <p className="text-xs text-slate-400 mb-6">
+            Enter your secret 4-digit PIN to access the editorial publishing desk.
+          </p>
+
+          <form onSubmit={handleUnlock} className="space-y-4">
+            <input 
+              type="password"
+              autoFocus
+              maxLength={6}
+              value={pinInput}
+              onChange={(e) => setPinInput(e.target.value)}
+              placeholder="••••"
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-center text-white tracking-[0.5em] text-2xl font-bold focus:outline-none focus:border-rose-500 transition"
+            />
+            {pinError && (
+              <p className="text-xs text-rose-400 font-medium">Incorrect PIN. Try 7860</p>
+            )}
+            <button
+              type="submit"
+              className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-rose-950"
+            >
+              Unlock Dashboard
+            </button>
+          </form>
+
+          <div className="mt-6 pt-4 border-t border-slate-800/80">
+            <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 transition">
+              ← Return to Frontpage
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100 py-10 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto">
@@ -61,9 +127,20 @@ export default function DashboardPage() {
           <Link href="/" className="inline-flex items-center gap-2 text-rose-400 hover:text-white transition text-sm font-semibold">
             <ArrowLeft className="w-4 h-4" /> Return to News Portal (Home)
           </Link>
-          <span className="text-xs bg-rose-600/20 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full font-bold">
-            Editorial Dispatch Desk
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs bg-rose-600/20 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full font-bold">
+              Chef Mizan Dispatch Desk
+            </span>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("admin_pin_unlocked");
+                setIsAuthenticated(false);
+              }}
+              className="text-xs text-slate-500 hover:text-rose-400 transition"
+            >
+              Lock
+            </button>
+          </div>
         </div>
 
         <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
@@ -72,7 +149,7 @@ export default function DashboardPage() {
               <PlusCircle className="w-6 h-6 text-rose-500" /> Create & Publish New Story
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Easy Blogger-style interface: fill out the form and hit publish to instantly go live on the US & Global frontpage.
+              Fill out the headline, video ID, and investigation details to publish live on the frontpage.
             </p>
           </div>
 
