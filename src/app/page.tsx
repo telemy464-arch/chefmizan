@@ -767,14 +767,9 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Floating Bottom Social Sharing Bar inside Post Reader */}
-              <div className="sticky bottom-4 z-40 mt-8 flex items-center justify-between gap-3 bg-slate-900/95 border border-slate-700/90 rounded-2xl p-3 shadow-2xl backdrop-blur-md">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300 pl-2">
-                  <Share2 className="w-4 h-4 text-rose-500" />
-                  <span className="hidden sm:inline">Share this Investigation:</span>
-                </div>
-
-                <div className="flex items-center gap-2">
+              {/* Floating Bottom Social Sharing Dock inside Post Reader */}
+              <div className="sticky bottom-4 z-40 mt-8 flex justify-center pointer-events-none">
+                <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-950/75 border border-white/10 backdrop-blur-md shadow-2xl pointer-events-auto">
                   {/* WhatsApp Share */}
                   <a 
                     href={`https://api.whatsapp.com/send?text=${encodeURIComponent(activeArticle.title + ' - https://chefmizan.cyou')}`}
