@@ -290,10 +290,8 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* Language Translator & Conditional Admin Button */}
-            <div className="flex items-center space-x-3 sm:space-x-4">
-              
-              {/* Language Selector */}
+            {/* Language Translator Only (No login button or secret key icon on public interface) */}
+            <div className="flex items-center space-x-3">
               <div className="relative">
                 <button
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
@@ -329,33 +327,6 @@ export default function HomePage() {
                   </div>
                 )}
               </div>
-
-              {/* ADMIN ONLY BUTTON: Hidden for regular visitors */}
-              {isAdmin ? (
-                <div className="flex items-center gap-2">
-                  <Link 
-                    href="/dashboard" 
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-md shadow-rose-950"
-                  >
-                    + Write Post
-                  </Link>
-                  <button 
-                    onClick={handleAdminLogout}
-                    className="text-[11px] text-slate-400 hover:text-rose-400 transition"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowAdminLoginModal(true)}
-                  className="text-[11px] text-slate-500 hover:text-slate-300 transition flex items-center gap-1"
-                  title="Editor Access"
-                >
-                  <Lock className="w-3 h-3" />
-                </button>
-              )}
-
             </div>
           </div>
         </div>
