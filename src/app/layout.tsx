@@ -84,6 +84,33 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        {/* Google Schema.org JSON-LD Structured Data for NewsMediaOrganization & NewsArticle */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsMediaOrganization",
+              "name": "The Borders Unfolded",
+              "alternateName": "Chef Mizan",
+              "url": "https://chefmizan.cyou",
+              "logo": "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
+              "sameAs": [
+                "https://www.youtube.com/@TheBordersUnfolded",
+                "https://facebook.com/Chefmizan7",
+                "https://instagram.com/chefmizan"
+              ],
+              "founder": {
+                "@type": "Person",
+                "name": "Chef Mizan",
+                "jobTitle": "Investigative Geopolitical Journalist & Creator"
+              },
+              "publishingPrinciples": "https://chefmizan.cyou",
+              "description": "Investigating global sovereign anomalies, border enclaves, geopolitical wonders, and international treaties."
+            }),
+          }}
+        />
+
         {/* Google Translate Hidden Engine */}
         <div id="google_translate_element" style={{ display: "none" }} />
         <script
