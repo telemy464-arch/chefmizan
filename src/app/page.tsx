@@ -377,9 +377,27 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="hidden lg:flex items-center gap-4 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl text-xs text-slate-400">
-              <Flame className="w-4 h-4 text-rose-500 animate-pulse" />
-              <span>Domain: <strong>chefmizan.cyou</strong> | YouTube: <strong>@TheBordersUnfolded</strong></span>
+            {/* Dynamic Geolocation & Radar Globe Badge */}
+            <div className="hidden lg:flex items-center gap-3.5 bg-slate-900/70 border border-slate-800/90 px-4 py-2 rounded-2xl shadow-lg backdrop-blur-sm">
+              <div className="relative flex items-center justify-center">
+                <span className="absolute w-7 h-7 rounded-full bg-rose-500/20 animate-ping" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-400 p-[1.5px] shadow-md shadow-rose-950">
+                  <div className="w-full h-full bg-[#0b1120] rounded-full flex items-center justify-center">
+                    <Globe className="w-4 h-4 text-rose-400 animate-[spin_10s_linear_infinite]" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-200">
+                    Live Geopolitical Radar
+                  </span>
+                </div>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  Coordinates Active • 24/7 Global Dispatch
+                </span>
+              </div>
             </div>
           </div>
         </div>
