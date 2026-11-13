@@ -649,23 +649,27 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Article Reader Modal */}
+      {/* Article Reader Modal with Sticky Floating Close Button */}
       {activeArticle && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0b1120] border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-[#0b1120] border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative">
             
-            <button 
-              onClick={() => setActiveArticle(null)}
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="p-6 sm:p-8">
-              <span className="inline-block px-3 py-1 rounded-full bg-rose-600/20 text-rose-400 text-xs font-bold mb-3 border border-rose-500/30">
+            {/* Sticky Header / Floating Persistent Close Button Bar */}
+            <div className="sticky top-0 right-0 z-30 flex items-center justify-between px-6 py-3.5 bg-[#0b1120]/90 backdrop-blur-md border-b border-slate-800/80">
+              <span className="inline-block px-3 py-1 rounded-full bg-rose-600/20 text-rose-400 text-xs font-bold border border-rose-500/30">
                 {activeArticle.category}
               </span>
 
+              <button 
+                onClick={() => setActiveArticle(null)}
+                className="w-9 h-9 rounded-full bg-slate-800/90 hover:bg-rose-600 text-slate-200 hover:text-white flex items-center justify-center transition-all shadow-lg border border-slate-700/80 hover:border-rose-500 flex-shrink-0"
+                title="Close Story (ESC)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 sm:p-8 pt-4">
               <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight font-serif mb-4">
                 {activeArticle.title}
               </h1>
