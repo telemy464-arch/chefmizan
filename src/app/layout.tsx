@@ -13,10 +13,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Borders Unfolded | Global Geopolitics & Border Anomalies",
+  metadataBase: new URL("https://chefmizan.cyou"),
+  title: {
+    default: "The Borders Unfolded | Global Geopolitics & Border Anomalies",
+    template: "%s | The Borders Unfolded",
+  },
   description:
-    "Official investigative news and documentary platform by Chef Mizan. Exploring sovereign anomalies, border enclaves, treaties, and global geopolitics.",
-  keywords: ["The Borders Unfolded", "Chef Mizan", "chefmizan.cyou", "Border Anomalies", "Llívia Enclave", "Geopolitics", "Pyrenees"],
+    "Official investigative news and documentary platform by Chef Mizan. Exploring sovereign anomalies, border enclaves, historical treaties, and verified global geopolitics.",
+  keywords: [
+    "The Borders Unfolded",
+    "Chef Mizan",
+    "chefmizan.cyou",
+    "Border Anomalies",
+    "Llívia Enclave",
+    "Baarle-Nassau",
+    "Bir Tawil",
+    "Geopolitics",
+    "World Mysteries",
+    "Pyrenees Treaty",
+    "International Borders"
+  ],
+  authors: [{ name: "Chef Mizan", url: "https://chefmizan.cyou" }],
+  creator: "Chef Mizan",
+  publisher: "The Borders Unfolded Media",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     title: "The Borders Unfolded | Global Geopolitics & Border Mysteries",
     description: "Investigating the world's most fascinating borders, enclaves, and historical treaties.",
@@ -24,6 +48,31 @@ export const metadata: Metadata = {
     siteName: "The Borders Unfolded",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80",
+        width: 1200,
+        height: 630,
+        alt: "The Borders Unfolded - Global Border Anomalies",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Borders Unfolded | Global Geopolitics & Border Anomalies",
+    description: "Investigating the world's most unexplained border anomalies and sovereign treaties.",
+    images: ["https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
