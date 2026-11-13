@@ -16,7 +16,8 @@ import {
   X,
   Check,
   ShieldCheck,
-  Lock
+  Lock,
+  Share2
 } from "lucide-react";
 
 interface Comment {
@@ -764,6 +765,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+              </div>
 
               {/* Floating Bottom Social Sharing Bar inside Post Reader */}
               <div className="sticky bottom-4 z-40 mt-8 flex items-center justify-between gap-3 bg-slate-900/95 border border-slate-700/90 rounded-2xl p-3 shadow-2xl backdrop-blur-md">
