@@ -360,40 +360,46 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Newspaper Masthead with Continuously Walking Globe Track */}
-        <div className="border-t border-slate-800/80 py-5 bg-[#080c16] relative overflow-hidden">
+        {/* Newspaper Masthead with Continuously Scrolling World Map Background */}
+        <div className="border-t border-slate-800/80 py-6 bg-[#080c16] relative overflow-hidden">
           
+          {/* Panoramic Scrolling World Map Layer with 50%-60% Opacity */}
+          <div className="absolute inset-0 pointer-events-none opacity-50 contrast-125 animate-map-scroll mix-blend-screen" />
+          
+          {/* Subtle Dark Gradient Overlay for optimal readability */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-[#080c16]/90 via-[#080c16]/60 to-[#080c16]/90" />
+
           {/* Continuous Walking Globe / Logo Track from Left to Right */}
-          <div className="absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden h-9 flex items-center">
+          <div className="absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden h-9 flex items-center z-10">
             {/* Subtle radar track line */}
-            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
+            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
             
             {/* Continuously walking glowing globe logo */}
             <div className="absolute left-0 animate-walk-across flex items-center gap-2">
               <div className="relative flex items-center justify-center">
-                <span className="absolute w-6 h-6 rounded-full bg-rose-500/30 animate-ping" />
+                <span className="absolute w-6 h-6 rounded-full bg-rose-500/40 animate-ping" />
                 <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-400 p-[1px] shadow-lg shadow-rose-900/60">
                   <div className="w-full h-full bg-[#080c16] rounded-full flex items-center justify-center">
                     <Globe className="w-4 h-4 text-rose-400 animate-[spin_4s_linear_infinite]" />
                   </div>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold tracking-wider text-rose-400/80 bg-rose-950/40 px-2 py-0.5 rounded-full border border-rose-900/30 whitespace-nowrap hidden sm:inline-block">
-                GLOBAL SCOPE ⟿
+              <span className="text-[10px] font-mono font-bold tracking-wider text-rose-300 bg-rose-950/70 px-2 py-0.5 rounded-full border border-rose-900/50 whitespace-nowrap hidden sm:inline-block backdrop-blur-sm">
+                GLOBAL RADAR ⟿
               </span>
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center sm:items-start">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex flex-col items-center sm:items-start">
             <Link href="/" className="group inline-flex items-baseline gap-2">
-              <span className="text-3xl sm:text-4xl font-black tracking-tight text-white font-serif">
+              <span className="text-3xl sm:text-4xl font-black tracking-tight text-white font-serif drop-shadow-md">
                 CHEF MIZAN <span className="text-rose-500">.</span>
               </span>
-              <span className="text-xs uppercase tracking-widest text-slate-400 font-mono font-bold">
+              <span className="text-xs uppercase tracking-widest text-slate-300 font-mono font-bold bg-slate-950/70 px-2 py-0.5 rounded border border-slate-800">
                 THE BORDERS UNFOLDED
               </span>
             </Link>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-300 mt-1.5 font-medium drop-shadow-sm">
               Investigative Geopolitics • Border Anomalies • Sovereign History • Global Reports
             </p>
           </div>

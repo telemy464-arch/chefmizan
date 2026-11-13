@@ -57,3 +57,21 @@ body {
   animation: walkAcross 18s linear infinite;
 }
 
+/* Continuous Sliding World Map Panorama */
+@keyframes mapScroll {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 1000px 50%;
+  }
+}
+
+.animate-map-scroll {
+  background-image: url('/world-map.jpg');
+  background-size: 1000px auto;
+  background-repeat: repeat-x;
+  animation: mapScroll 35s linear infinite;
+}
+
+
