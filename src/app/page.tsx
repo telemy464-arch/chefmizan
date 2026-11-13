@@ -682,19 +682,29 @@ export default function HomePage() {
                 <span>{activeArticle.reads} Reads</span>
               </div>
 
+              {/* YouTube Video or Cover Image with Cover Poster */}
               {activeArticle.youtubeId ? (
-                <div className="relative aspect-video rounded-2xl overflow-hidden mb-6 border border-slate-800 bg-black">
-                  <iframe 
-                    src={`https://www.youtube.com/embed/${activeArticle.youtubeId}`} 
-                    title={activeArticle.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 w-full h-full border-0"
-                  />
+                <div className="space-y-4 mb-6">
+                  {/* High Quality Video Player with Thumbnail Preview */}
+                  <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-800 bg-black shadow-2xl">
+                    <iframe 
+                      src={`https://www.youtube.com/embed/${activeArticle.youtubeId}?autoplay=0&rel=0`} 
+                      title={activeArticle.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full border-0"
+                    />
+                  </div>
+                  {/* Optional Custom Cover Banner Photo If Provided */}
+                  {activeArticle.image && !activeArticle.image.includes("unsplash.com/photo-1516483638261") && (
+                    <div className="rounded-2xl overflow-hidden border border-slate-800 shadow-md">
+                      <img src={activeArticle.image} alt={activeArticle.title} className="w-full h-auto object-cover max-h-96" />
+                    </div>
+                  )}
                 </div>
               ) : (
-                <div className="rounded-2xl overflow-hidden mb-6 border border-slate-800">
-                  <img src={activeArticle.image} alt={activeArticle.title} className="w-full h-auto object-cover" />
+                <div className="rounded-2xl overflow-hidden mb-6 border border-slate-800 shadow-md">
+                  <img src={activeArticle.image} alt={activeArticle.title} className="w-full h-auto object-cover max-h-96" />
                 </div>
               )}
 
