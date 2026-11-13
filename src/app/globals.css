@@ -42,3 +42,18 @@ body {
 .goog-logo-link {
   display: none !important;
 }
+
+/* Continuous Walking / Patrolling Globe Animation across Header */
+@keyframes walkAcross {
+  0% {
+    transform: translateX(-60px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 60px));
+  }
+}
+
+.animate-walk-across {
+  animation: walkAcross 18s linear infinite;
+}
+
